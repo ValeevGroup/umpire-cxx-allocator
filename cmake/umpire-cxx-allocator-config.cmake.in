@@ -1,0 +1,14 @@
+# - CMAKE Config file for the umpire-cxx-allocator package
+
+# Set package version
+set(umpire-cxx-allocator_VERSION "@umpire-cxx-allocator_VERSION@")
+
+@PACKAGE_INIT@
+
+# N.B. no importing umpire TARGET as it was recreated in umpire-cxx-allocator-targets.cmake
+
+if(NOT TARGET umpire-cxx-allocator)
+  include("${CMAKE_CURRENT_LIST_DIR}/umpire-cxx-allocator-targets.cmake")
+endif()
+
+set(umpire-cxx-allocator_FOUND TRUE)
