@@ -3,7 +3,7 @@
 cmake_minimum_required (VERSION 3.14.0)  # for FetchContent_MakeAvailable
 
 set(VRGUmpireCXXAllocator_TRACKED_VGCMAKEKIT_TAG 4c949fd7ccfe4b4f0e103288a5c0f557c6e740c0)
-set(VRGUmpireCXXAllocator_TRACKED_UMPIRE_TAG 8c85866107f78a58403e20a2ae8e1f24c9852287)
+set(VRGUmpireCXXAllocator_TRACKED_UMPIRE_TAG 2bb2b6b82f0feeb3ead56731904f14b5226d4258)
 
 # Safety net for dev workflow: accidental install will not affect FindOrFetch*
 if (NOT DEFINED CACHE{CMAKE_FIND_NO_INSTALL_PREFIX})
