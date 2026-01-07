@@ -166,6 +166,8 @@ if (NOT TARGET umpire)
             if (DEFINED CUDA_TOOLKIT_ROOT_DIR)
                 list(APPEND UMPIRE_CMAKE_ARGS "-DCUDA_TOOLKIT_ROOT_DIR=${CUDA_TOOLKIT_ROOT_DIR}")
             endif()
+            # try to resolve mysterious 'Could NOT find CUDA (missing: CUDA_NVCC_EXECUTABLE)' errors
+            list(APPEND UMPIRE_CMAKE_ARGS "-DCUDA_NVCC_EXECUTABLE=${CMAKE_CUDA_COMPILER}")
         endif()
         if (UMPIRE_ENABLE_HIP)
             list(APPEND UMPIRE_CMAKE_ARGS
