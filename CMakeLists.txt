@@ -2,7 +2,7 @@
 
 cmake_minimum_required (VERSION 3.14.0)  # for FetchContent_MakeAvailable
 
-set(VRGUmpireCXXAllocator_TRACKED_VGCMAKEKIT_TAG 4c949fd7ccfe4b4f0e103288a5c0f557c6e740c0)
+set(VRGUmpireCXXAllocator_TRACKED_VGCMAKEKIT_TAG 256d9462bb765787f5acb69be154b26d6efba8b6)
 set(VRGUmpireCXXAllocator_TRACKED_UMPIRE_TAG kab163/update-c++20)
 
 # Safety net for dev workflow: accidental install will not affect FindOrFetch*
@@ -34,6 +34,14 @@ project(umpire-cxx-allocator
         DESCRIPTION "C++ standard-compliant allocator for LLNL/Umpire"
         LANGUAGES CXX
         HOMEPAGE_URL "https://github.com/ValeevGroup/umpire-cxx-allocator")
+
+# Detect libc++ linker mismatch (e.g. Homebrew LLVM headers vs system libc++) ==
+include(CheckCXXFeatures)
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    vgkit_check_libcxx_linker_mismatch(MODIFY_GLOBAL_FLAGS)
+else()
+    vgkit_check_libcxx_linker_mismatch()
+endif()
 
 # Set install paths ============================================================
 
@@ -121,6 +129,8 @@ if (NOT TARGET umpire)
                 -DCMAKE_CXX_FLAGS_MINSIZEREL=${CMAKE_CXX_FLAGS_MINSIZEREL}
                 -DCMAKE_CXX_STANDARD=${BLT_CXX_STD}
                 -DCMAKE_AR=${CMAKE_AR}
+                "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}"
+                "-DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS}"
                 -DBLT_CXX_STD=c++${BLT_CXX_STD}
                 -DENABLE_BENCHMARKS=OFF
                 -DENABLE_OPENMP=OFF
