@@ -216,7 +216,8 @@ if (NOT TARGET umpire)
         endif(BUILD_SHARED_LIBS)
 
         # N.B. Ninja needs spelling out the byproducts of custom targets, see https://cmake.org/cmake/help/v3.3/policy/CMP0058.html
-        set(UMPIRE_BUILD_BYPRODUCTS "${EXTERNAL_BUILD_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}")
+        set(UMPIRE_BUILD_BYPRODUCTS "${EXTERNAL_BUILD_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}"
+                                    "${EXTERNAL_BUILD_DIR}/lib/libcamp${UMPIRE_DEFAULT_LIBRARY_SUFFIX}")
         message(STATUS "custom target umpire is expected to build these byproducts: ${UMPIRE_BUILD_BYPRODUCTS}")
 
         include(VRGImportExternalProject)
@@ -257,7 +258,7 @@ if (NOT TARGET umpire)
                 INTERFACE_INCLUDE_DIRECTORIES
                 "$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl/umpire/camp/include>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl/umpire/fmt/include>;$<BUILD_INTERFACE:${EXTERNAL_BUILD_DIR}/src/tpl/umpire/camp/include>;$<BUILD_INTERFACE:${EXTERNAL_BUILD_DIR}/include>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/include>"
                 INTERFACE_LINK_LIBRARIES
-                "$<BUILD_INTERFACE:${UMPIRE_BUILD_BYPRODUCTS}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>"
+                "$<BUILD_INTERFACE:${UMPIRE_BUILD_BYPRODUCTS}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libcamp${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>"
                 INTERFACE_LINK_OPTIONS
                 "LINKER:-rpath,${EXTERNAL_BUILD_DIR}/lib"
                 INTERFACE_COMPILE_DEFINITIONS
