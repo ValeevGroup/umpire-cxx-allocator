@@ -2,8 +2,8 @@
 
 cmake_minimum_required (VERSION 3.14.0)  # for FetchContent_MakeAvailable
 
-set(VRGUmpireCXXAllocator_TRACKED_VGCMAKEKIT_TAG 4c949fd7ccfe4b4f0e103288a5c0f557c6e740c0)
-set(VRGUmpireCXXAllocator_TRACKED_UMPIRE_TAG 8c85866107f78a58403e20a2ae8e1f24c9852287)
+set(VRGUmpireCXXAllocator_TRACKED_VGCMAKEKIT_TAG 256d9462bb765787f5acb69be154b26d6efba8b6)
+set(VRGUmpireCXXAllocator_TRACKED_UMPIRE_TAG 5ff0d696d84f1048faf72085743630fcf33c0928)
 
 # Safety net for dev workflow: accidental install will not affect FindOrFetch*
 if (NOT DEFINED CACHE{CMAKE_FIND_NO_INSTALL_PREFIX})
@@ -34,6 +34,14 @@ project(umpire-cxx-allocator
         DESCRIPTION "C++ standard-compliant allocator for LLNL/Umpire"
         LANGUAGES CXX
         HOMEPAGE_URL "https://github.com/ValeevGroup/umpire-cxx-allocator")
+
+# Detect libc++ linker mismatch (e.g. Homebrew LLVM headers vs system libc++) ==
+include(CheckCXXFeatures)
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    vgkit_check_libcxx_linker_mismatch(MODIFY_GLOBAL_FLAGS)
+else()
+    vgkit_check_libcxx_linker_mismatch()
+endif()
 
 # Set install paths ============================================================
 
@@ -121,6 +129,8 @@ if (NOT TARGET umpire)
                 -DCMAKE_CXX_FLAGS_MINSIZEREL=${CMAKE_CXX_FLAGS_MINSIZEREL}
                 -DCMAKE_CXX_STANDARD=${BLT_CXX_STD}
                 -DCMAKE_AR=${CMAKE_AR}
+                "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}"
+                "-DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS}"
                 -DBLT_CXX_STD=c++${BLT_CXX_STD}
                 -DENABLE_BENCHMARKS=OFF
                 -DENABLE_OPENMP=OFF
@@ -206,7 +216,8 @@ if (NOT TARGET umpire)
         endif(BUILD_SHARED_LIBS)
 
         # N.B. Ninja needs spelling out the byproducts of custom targets, see https://cmake.org/cmake/help/v3.3/policy/CMP0058.html
-        set(UMPIRE_BUILD_BYPRODUCTS "${EXTERNAL_BUILD_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}")
+        set(UMPIRE_BUILD_BYPRODUCTS "${EXTERNAL_BUILD_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}"
+                                    "${EXTERNAL_BUILD_DIR}/lib/libcamp${UMPIRE_DEFAULT_LIBRARY_SUFFIX}")
         message(STATUS "custom target umpire is expected to build these byproducts: ${UMPIRE_BUILD_BYPRODUCTS}")
 
         include(VRGImportExternalProject)
@@ -247,7 +258,7 @@ if (NOT TARGET umpire)
                 INTERFACE_INCLUDE_DIRECTORIES
                 "$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl/umpire/camp/include>;$<BUILD_INTERFACE:${EXTERNAL_SOURCE_DIR}/src/tpl/umpire/fmt/include>;$<BUILD_INTERFACE:${EXTERNAL_BUILD_DIR}/src/tpl/umpire/camp/include>;$<BUILD_INTERFACE:${EXTERNAL_BUILD_DIR}/include>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/include>"
                 INTERFACE_LINK_LIBRARIES
-                "$<BUILD_INTERFACE:${UMPIRE_BUILD_BYPRODUCTS}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>"
+                "$<BUILD_INTERFACE:${UMPIRE_BUILD_BYPRODUCTS}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libumpire${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>;$<INSTALL_INTERFACE:${_UMPIRE_INSTALL_DIR}/lib/libcamp${UMPIRE_DEFAULT_LIBRARY_SUFFIX}>"
                 INTERFACE_LINK_OPTIONS
                 "LINKER:-rpath,${EXTERNAL_BUILD_DIR}/lib"
                 INTERFACE_COMPILE_DEFINITIONS
